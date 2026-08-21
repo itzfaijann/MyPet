@@ -1,45 +1,46 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect, useState } from 'react';
+import { StatusBar } from 'react-native';
+import { Provider, useDispatch } from 'react-redux';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { store } from './src/store';
+import { hydrate, applyOfflineDecay } from './src/store/petSlice';
+import { loadState } from './src/store/storage';
+import { HomeScreen } from './src/components/HomeScreen';
+import { SplashScreen } from './src/components/SplashScreen';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+function AppInner() {
+  const dispatch = useDispatch();
+  const [showSplash, setShowSplash] = useState(true);
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  useEffect(() => {
+    try {
+      const saved = loadState();
+      if (saved) {
+        dispatch(hydrate(saved));
+        const elapsedMinutes = (Date.now() - saved.lastSavedAt) / 1000 / 60;
+        if (elapsedMinutes > 1) dispatch(applyOfflineDecay(elapsedMinutes));
+      }
+    } catch (e) {}
+  }, []);
+
+  if (showSplash) {
+    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+  }
 
   return (
+    <>
+      <StatusBar barStyle="light-content" backgroundColor="#1a0533" />
+      <HomeScreen />
+    </>
+  );
+}
+
+export default function App() {
+  return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <Provider store={store}>
+        <AppInner />
+      </Provider>
     </SafeAreaProvider>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
-
-export default App;

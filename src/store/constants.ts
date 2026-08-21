@@ -1,0 +1,29 @@
+export const ACTION = {
+  FEED_HUNGER: 20,
+  PLAY_HAPPY: 20,
+  PLAY_ENERGY_COST: 10,
+  COINS_PER_ACTION: 1,
+  XP_PER_ACTION: 10,
+};
+
+export const DECAY = {
+  HUNGER_PER_TICK: 1,
+  HAPPY_PER_TICK: 1,
+  ENERGY_PER_TICK: 1,
+  TICK_MS: 3000,
+  OFFLINE_PER_MINUTE: 2,
+  OFFLINE_CAP: 40,
+};
+
+export const SLEEP = {
+  ENERGY_RESTORE_PER_TICK: 3,
+};
+
+export const PROGRESSION = {
+  XP_PER_LEVEL: 100,
+};
+
+export const MOOD = {
+  HAPPY_THRESHOLD: 65,
+  NEUTRAL_THRESHOLD: 35,
+};
